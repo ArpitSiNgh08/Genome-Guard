@@ -1,5 +1,5 @@
 import React from 'react';
-import { Shield, Heart, Activity, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Shield, Heart, Activity, AlertTriangle, CheckCircle, Info } from 'lucide-react';
 
 const PreventiveMeasures = ({ riskLevel, variants = [] }) => {
   const getPreventiveMeasures = (risk, variants) => {
@@ -49,36 +49,96 @@ const PreventiveMeasures = ({ riskLevel, variants = [] }) => {
 
   const getGeneSpecificMeasures = (variants) => {
     const geneMap = {
-      'BRCA1': [
-        "Breast MRI screening starting age 25",
-        "Consider prophylactic mastectomy",
-        "Ovarian cancer screening"
-      ],
-      'BRCA2': [
-        "Enhanced breast cancer screening",
-        "Prostate cancer screening for males",
-        "Pancreatic cancer awareness"
-      ],
-      'APOE': [
-        "Cognitive assessment annually",
-        "Brain-healthy diet (MIND diet)",
-        "Mental stimulation activities"
-      ],
-      'TP53': [
-        "Comprehensive cancer screening",
-        "Avoid radiation exposure",
-        "Regular dermatological exams"
-      ]
+      'BRCA1': {
+        measures: [
+          "Breast MRI screening starting age 25-30",
+          "Clinical breast exam every 6 months",
+          "Consider prophylactic mastectomy (discuss with oncologist)",
+          "Transvaginal ultrasound and CA-125 testing",
+          "Consider prophylactic oophorectomy after age 35-40",
+          "Avoid hormone replacement therapy"
+        ],
+        disease: "Breast/Ovarian Cancer",
+        urgency: "high"
+      },
+      'BRCA2': {
+        measures: [
+          "Enhanced breast cancer screening (MRI + mammography)",
+          "Prostate cancer screening for males starting age 40",
+          "Pancreatic cancer surveillance if family history",
+          "Melanoma screening annually",
+          "Consider genetic counseling for family planning"
+        ],
+        disease: "Breast/Prostate/Pancreatic Cancer",
+        urgency: "high"
+      },
+      'APOE': {
+        measures: [
+          "Cognitive assessment annually after age 50",
+          "MIND diet (Mediterranean-DASH hybrid)",
+          "Regular aerobic exercise (30 min, 5x/week)",
+          "Mental stimulation activities (reading, puzzles)",
+          "Social engagement and stress management",
+          "Monitor cardiovascular health closely"
+        ],
+        disease: "Alzheimer's Disease",
+        urgency: "medium"
+      },
+      'TP53': {
+        measures: [
+          "Comprehensive cancer screening protocol",
+          "Avoid unnecessary radiation exposure",
+          "Annual dermatological examination",
+          "Breast MRI for females starting age 20",
+          "Colonoscopy every 2-5 years starting age 25",
+          "Consider whole-body MRI screening"
+        ],
+        disease: "Li-Fraumeni Syndrome",
+        urgency: "high"
+      },
+      'MLH1': {
+        measures: [
+          "Colonoscopy every 1-2 years starting age 20-25",
+          "Endometrial biopsy annually for females",
+          "Upper endoscopy every 3-5 years",
+          "Urinalysis annually",
+          "Consider prophylactic hysterectomy after childbearing"
+        ],
+        disease: "Lynch Syndrome",
+        urgency: "high"
+      },
+      'APC': {
+        measures: [
+          "Colonoscopy annually starting age 10-15",
+          "Upper endoscopy every 1-3 years",
+          "Thyroid examination annually",
+          "Consider prophylactic colectomy",
+          "Genetic counseling for family planning"
+        ],
+        disease: "Familial Adenomatous Polyposis",
+        urgency: "high"
+      }
     };
 
     const specificMeasures = [];
+    const diseaseInfo = [];
+    
     variants.forEach(variant => {
       if (variant.gene && geneMap[variant.gene]) {
-        specificMeasures.push(...geneMap[variant.gene]);
+        const geneData = geneMap[variant.gene];
+        specificMeasures.push(...geneData.measures);
+        diseaseInfo.push({
+          gene: variant.gene,
+          disease: geneData.disease,
+          urgency: geneData.urgency
+        });
       }
     });
 
-    return [...new Set(specificMeasures)];
+    return {
+      measures: [...new Set(specificMeasures)],
+      diseases: diseaseInfo
+    };
   };
 
   const preventiveData = getPreventiveMeasures(riskLevel, variants);
@@ -109,14 +169,31 @@ const PreventiveMeasures = ({ riskLevel, variants = [] }) => {
         </div>
 
         {/* Gene-Specific Measures */}
-        {geneSpecific.length > 0 && (
+        {geneSpecific.measures.length > 0 && (
           <div>
             <h3 className="font-medium text-gray-900 mb-3 flex items-center">
               <Activity className="h-5 w-5 mr-2 text-gray-600" />
               Gene-Specific Recommendations
             </h3>
+            
+            {/* Disease Information */}
+            {geneSpecific.diseases.length > 0 && (
+              <div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                <h4 className="font-medium text-blue-900 mb-2">Associated Conditions:</h4>
+                <div className="flex flex-wrap gap-2">
+                  {geneSpecific.diseases.map((info, index) => (
+                    <span key={index} className={`px-3 py-1 rounded-full text-xs font-medium ${
+                      info.urgency === 'high' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'
+                    }`}>
+                      {info.gene}: {info.disease}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+            
             <ul className="space-y-2">
-              {geneSpecific.map((measure, index) => (
+              {geneSpecific.measures.map((measure, index) => (
                 <li key={index} className="flex items-start">
                   <CheckCircle className="h-4 w-4 text-blue-500 mt-0.5 mr-2 flex-shrink-0" />
                   <span className="text-sm text-gray-700">{measure}</span>
@@ -127,12 +204,17 @@ const PreventiveMeasures = ({ riskLevel, variants = [] }) => {
         )}
 
         {/* Emergency Contact */}
-        {riskLevel === 'high' && (
+        {(riskLevel === 'high' || geneSpecific.diseases.some(d => d.urgency === 'high')) && (
           <div className="bg-white p-4 rounded-lg border border-red-200">
-            <h4 className="font-medium text-red-900 mb-2">⚠️ Important</h4>
-            <p className="text-sm text-red-700">
+            <h4 className="font-medium text-red-900 mb-2">⚠️ Urgent Medical Consultation Required</h4>
+            <p className="text-sm text-red-700 mb-2">
               Please consult with a healthcare professional immediately to discuss these results and develop a personalized prevention plan.
             </p>
+            <div className="text-xs text-red-600">
+              <p>• Schedule appointment with genetic counselor</p>
+              <p>• Bring family medical history</p>
+              <p>• Consider specialist referrals as recommended</p>
+            </div>
           </div>
         )}
       </div>
