@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { analysisAPI } from '../services/api';
 import toast from 'react-hot-toast';
 import { FileText, AlertCircle, CheckCircle, Clock, XCircle, ArrowLeft, Download } from 'lucide-react';
+import PreventiveMeasures from '../components/PreventiveMeasures';
 
 const Results = () => {
   const { id } = useParams();
@@ -253,6 +254,12 @@ const Results = () => {
               </div>
             </div>
           </div>
+
+          {/* Preventive Measures */}
+          <PreventiveMeasures 
+            riskLevel={analysis.risk_classification} 
+            variants={analysis.top_variants || []} 
+          />
 
           {/* Variants Table */}
           {analysis.top_variants && analysis.top_variants.length > 0 && (
