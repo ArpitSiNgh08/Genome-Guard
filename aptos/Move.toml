@@ -1,0 +1,16 @@
+[package]
+name = "GenomeGuard"
+version = "1.0.0"
+authors = ["GenomeGuard Team"]
+
+[addresses]
+genome_guard = "0x8b3ba2ff09a98d8da9255897bc84a10e0800b3a11b457be6117fface11c0f986"
+
+[dev-addresses]
+
+[dependencies.AptosFramework]
+git = "https://github.com/aptos-labs/aptos-core.git"
+rev = "mainnet"
+subdir = "aptos-move/framework/aptos-framework"
+
+[dev-dependencies]
