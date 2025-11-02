@@ -13,7 +13,14 @@ GenomeGuard is a **decentralized genomic analysis platform** that combines AI-po
 - 📦 **IPFS storage** - Decentralized, censorship-resistant storage
 - 🔑 **Self-sovereign identity** - You control your genomic information
 
-**[📖 Read Aptos Integration Details](./APTOS_BOUNTY_README.md)** | **[🚀 Quick Start](#quick-start)**
+**[📖 Full Aptos Bounty Submission](./APTOS_BOUNTY_SUBMISSION.md)** | **[✅ Submission Checklist](./SUBMISSION_CHECKLIST.md)** | **[🚀 Quick Start](#quick-start)**
+
+### 🎯 Aptos Integration Highlights
+- **Smart Contract:** `0x8b3ba2ff09a98d8da9255897bc84a10e0800b3a11b457be6117fface11c0f986`
+- **Verified Transaction:** [View on Explorer](https://explorer.aptoslabs.com/txn/0x9bf85a40783c08fc4f2989a5b2a5c10ba209a73c93b6dacd56168d68ab3d0b1f?network=devnet)
+- **Network:** Aptos Devnet
+- **Move Code:** 232 lines of production-ready smart contract
+- **Status:** ✅ Deployed, Initialized, & Transaction Verified
 
 ## 🚀 Quick Start
 
